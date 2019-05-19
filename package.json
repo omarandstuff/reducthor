@@ -3,12 +3,40 @@
   "version": "0.0.0",
   "description": "Redux wrapper",
   "main": "index.js",
-  "author": "David De Anda",
+  "author": "David De Anda <omarandstuff@gmail.com> (https://github.com/omarandstuff)",
   "license": "MIT",
+  "homepage": "https://github.com/omarandstuff/reduxer#readme",
+  "repository": "github:omarandstuff/reduxer",
+  "bugs": "https://github.com/omarandstuff/reduxer/issues",
+  "scripts": {
+    "clean": "rimraf dist coverage",
+    "build": "babel src --out-dir dist",
+    "test": "jest --watch",
+    "test:coverage": "jest --coverage --no-cache",
+    "playground": "babel-node playground",
+    "format": "prettier --write \"{src,tests}/**/*.js\"",
+    "format:check": "prettier --list-different \"{src,tests}/**/*.js\"",
+    "prepare": "yarn clean && yarn format:check && yarn test:coverage && yarn build"
+  },
   "dependencies": {
     "redux": "^4.0.1"
   },
   "devDependencies": {
+    "jest": "^24.8.0",
     "prettier": "^1.17.1"
-  }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  },
+  "keywords": [
+    "redux",
+    "wrapper",
+    "easy"
+  ]
 }
