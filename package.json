@@ -1,0 +1,11 @@
+{
+  "name": "reduxer",
+  "version": "0.0.0",
+  "description": "Redux wrapper",
+  "main": "index.js",
+  "author": "David De Anda",
+  "license": "MIT",
+  "dependencies": {
+    "redux": "^4.0.1"
+  }
+}
