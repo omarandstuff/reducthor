@@ -1,1 +1,1 @@
-export function index(): void {}
+export { default } from './Reduxer'
