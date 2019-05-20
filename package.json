@@ -2,7 +2,8 @@
   "name": "reduxer",
   "version": "0.0.0",
   "description": "Redux wrapper",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "David De Anda <omarandstuff@gmail.com> (https://github.com/omarandstuff)",
   "license": "MIT",
   "homepage": "https://github.com/omarandstuff/reduxer#readme",
@@ -10,21 +11,22 @@
   "bugs": "https://github.com/omarandstuff/reduxer/issues",
   "scripts": {
     "clean": "rimraf dist coverage",
-    "build": "babel src --out-dir dist",
+    "build": "tsc",
     "lint": "eslint src test",
     "test": "jest --watch",
     "test:coverage": "jest --coverage --no-cache",
     "playground": "babel-node playground",
-    "format": "prettier --write \"{src,tests}/**/*.js\"",
-    "format:check": "prettier --list-different \"{src,tests}/**/*.js\"",
-    "prepare": "yarn clean && yarn format:check && yarn test:coverage && yarn build"
+    "prepare": "yarn clean && yarn format:check && yarn lint && yarn test:coverage && yarn build"
   },
   "dependencies": {
     "redux": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
     "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
     "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
