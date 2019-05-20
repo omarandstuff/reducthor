@@ -19,6 +19,7 @@
     "prepare": "yarn clean && yarn lint && yarn test:coverage && yarn build"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "redux": "^4.0.1"
   },
   "devDependencies": {
