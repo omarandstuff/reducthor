@@ -16,12 +16,13 @@
     "test": "jest --watch",
     "test:coverage": "jest --coverage --no-cache",
     "playground": "babel-node playground",
-    "prepare": "yarn clean && yarn format:check && yarn lint && yarn test:coverage && yarn build"
+    "prepare": "yarn clean && yarn lint && yarn test:coverage && yarn build"
   },
   "dependencies": {
     "redux": "^4.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "eslint": "^5.16.0",
@@ -30,17 +31,13 @@
     "jest": "^24.8.0",
     "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
   },
   "files": [
     "dist",
     "src"
   ],
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ]
-  },
   "keywords": [
     "redux",
     "wrapper",
