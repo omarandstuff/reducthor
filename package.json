@@ -11,6 +11,7 @@
   "scripts": {
     "clean": "rimraf dist coverage",
     "build": "babel src --out-dir dist",
+    "lint": "eslint src test",
     "test": "jest --watch",
     "test:coverage": "jest --coverage --no-cache",
     "playground": "babel-node playground",
@@ -22,8 +23,12 @@
     "redux": "^4.0.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "eslint": "^5.16.0",
     "jest": "^24.8.0",
-    "prettier": "^1.17.1"
+    "prettier": "^1.17.1",
+    "rimraf": "^2.6.3",
+    "typescript": "^3.4.5"
   },
   "files": [
     "dist",
