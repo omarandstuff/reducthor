@@ -1,7 +1,7 @@
 import { index } from '../src/index'
 
-describe('index', () => {
-  it('Just happen', () => {
+describe('index', (): void => {
+  it('Just happen', (): void => {
     index()
   })
 })

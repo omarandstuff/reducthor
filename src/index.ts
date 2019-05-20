@@ -1,1 +1,1 @@
-export function index() {}
+export function index(): void {}
