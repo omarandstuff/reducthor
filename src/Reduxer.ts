@@ -1,5 +1,7 @@
-import { combineReducers, createStore, Reducer, Store, ReducersMapObject } from 'redux'
+import { applyMiddleware, combineReducers, createStore, Reducer, Store, ReducersMapObject } from 'redux'
 import { NameSpace, ReduxerConfig, ReduxConfig } from './Reduxer.types'
+import thunk from 'redux-thunk'
+import * as builders from './builders'
 
 /**
  * Defaul redux config is empty, the user can use this to initialize the store,
@@ -8,7 +10,7 @@ import { NameSpace, ReduxerConfig, ReduxConfig } from './Reduxer.types'
 const defaultReduxConfig: ReduxConfig = {
   reducer: undefined,
   initialState: undefined,
-  middleware: undefined
+  middleware: applyMiddleware(thunk)
 }
 
 /**

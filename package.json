@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
