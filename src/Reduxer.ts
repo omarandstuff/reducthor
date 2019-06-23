@@ -1,17 +1,6 @@
 import { applyMiddleware, combineReducers, createStore, Reducer, Store, ReducersMapObject } from 'redux'
-import { NameSpace, ReduxerConfig, ReduxConfig } from './Reduxer.types'
+import { Configuration } from './Reduxer.types'
 import thunk from 'redux-thunk'
-import * as builders from './builders'
-
-/**
- * Defaul redux config is empty, the user can use this to initialize the store,
- * use custom reducers and middleware.
- */
-const defaultReduxConfig: ReduxConfig = {
-  reducer: undefined,
-  initialState: undefined,
-  middleware: applyMiddleware(thunk)
-}
 
 /**
  * Reduxer will take care of automatic reducer creation that handles "standard"
@@ -20,37 +9,15 @@ const defaultReduxConfig: ReduxConfig = {
  *
  * It can also provide an encapsulated way of managing custom reducers (IDEA)
  *
- * @param {ReduxerConfig} reduxerConfig description of the automatic name spaces
- * to be handles
- *
- * @param {ReduxConfig} [reduxConfig] The user can pass direct redux configuration
- * through this object
+ * @param {Configuration} configuration of how reduxer will handle actions
  *
  */
 export default class Reduxer {
   public store: Store = null
 
-  public constructor(reduxerConfig: ReduxerConfig, reduxConfig: ReduxConfig = defaultReduxConfig) {
-    const generatedReducers: Reducer = this.generateReducers(reduxerConfig.nameSpaces)
+  private configuration: Configuration = null
 
-    this.store = createStore(generatedReducers, reduxConfig.initialState, reduxConfig.middleware)
-  }
-
-  private generateReducers(nameSpaces: NameSpace[]): Reducer {
-    const reducers: ReducersMapObject = nameSpaces.reduce((generated, nameSpace: NameSpace) => {
-      generated[nameSpace.name] = this.createReducerNameSpace(nameSpace)
-      return generated
-    }, {})
-
-    return combineReducers(reducers)
-  }
-
-  private createReducerNameSpace(nameSpace: NameSpace) {
-    return (state = {}, action) => {
-      switch (action.type) {
-        default:
-          return state
-      }
-    }
+  public constructor(configuation: Configuration) {
+    this.configuration = configuation
   }
 }

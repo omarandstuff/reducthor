@@ -1,15 +1,6 @@
 import { StoreEnhancer, Reducer } from 'redux'
 
-export interface NameSpace {
-  name: string
-}
-
-export interface ReduxerConfig {
-  nameSpaces: NameSpace[]
-}
-
-export interface ReduxConfig {
-  reducer: Reducer | Reducer[]
+export interface Configuration {
   initialState: object
   middleware: StoreEnhancer
 }
