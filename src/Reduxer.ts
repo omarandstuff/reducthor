@@ -12,10 +12,14 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
  *
  */
 export default class Reduxer {
+  // Reduxer will generate attributes on the fly so we need to make sure it does not conflic
+  // with typescript, maybe at some ponint retypy the reduxer class?
+  [key: string]: any
+
   // TODO: thunk actions have a problem with the Sore type since it expects only a plane Action
   public store: any = null
 
-  private actions: Array<(state: any, ...args: any[]) => any>
+  private actions: Array<(state: any, ...args: any[]) => any> = []
   private config: Config = null
 
   public constructor(config: Config) {
@@ -30,8 +34,8 @@ export default class Reduxer {
     // If composeWithDevTools is proveded we apply thunk and the provided middleware inside it or
     // we just apply it as normal. check https://github.com/zalmoxisus/redux-devtools-extension
     const finalMiddleWare = config.composeWithDevTools
-      ? config.composeWithDevTools(applyMiddleware(thunk, ...[].concat(config.middleware)))
-      : applyMiddleware(thunk, ...[].concat(config.middleware))
+      ? config.composeWithDevTools(applyMiddleware(thunk, ...(config.middleware || [])))
+      : applyMiddleware(thunk, ...(config.middleware || []))
 
     // Create the store as normally if an initial state is provided then just use that if not check if actios
     // are simple; in that case we initialize it as an Immutable Map and if not we just pass an empty object that
@@ -62,7 +66,7 @@ export default class Reduxer {
 
           this.generateRequestActions(action, derivedActionNames)
           this.generateRequestMainAction(action, derivedActionNames)
-        } else if (!action || action.type === 'simple') {
+        } else if (!action.type || action.type === 'simple') {
           this.generateSimpleAction(action)
           this.generateSimpleMainAction(action)
         }
@@ -93,7 +97,7 @@ export default class Reduxer {
 
             this.generateRequestActions(action, derivedActionNames, reducerNameSpace)
             this.generateRequestMainAction(action, derivedActionNames, reducerNameSpace)
-          } else if (!action || action.type === 'simple') {
+          } else if (!action.type || action.type === 'simple') {
             this.generateSimpleAction(action, reducerNameSpace)
             this.generateSimpleMainAction(action, reducerNameSpace)
           }
@@ -113,7 +117,7 @@ export default class Reduxer {
     }
   }
 
-  public generateDerivedActionsNames(actionName: string): any {
+  private generateDerivedActionsNames(actionName: string): any {
     return {
       functionName: actionName.toLowerCase().replace(/_([a-z])/g, g => g[1].toUpperCase()),
       setRequestingActionName: `${actionName}_SET_REQUESTING`,
@@ -195,7 +199,7 @@ export default class Reduxer {
     }
   }
 
-  generateRequestMainAction(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined) {
+  private generateRequestMainAction(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined) {
     const holder = reducerNameSpace ? this[reducerNameSpace] : this
 
     holder[derivedActionNames.functionName] = (...args: any[]) => {
@@ -264,7 +268,7 @@ export default class Reduxer {
     }
   }
 
-  generateSimpleAction(action: Action, reducerNameSpace: string = undefined) {
+  private generateSimpleAction(action: Action, reducerNameSpace: string = undefined) {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
     actions[action.name] = (state, ...args) => {
@@ -276,7 +280,7 @@ export default class Reduxer {
     }
   }
 
-  generateSimpleMainAction(action: Action, reducerNameSpace: string = undefined) {
+  private generateSimpleMainAction(action: Action, reducerNameSpace: string = undefined) {
     const functionName = action.name.toLowerCase().replace(/_([a-z])/g, g => g[1].toUpperCase())
     const holder = reducerNameSpace ? this[reducerNameSpace] : this
 

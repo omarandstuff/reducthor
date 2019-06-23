@@ -4,7 +4,7 @@ export interface Action {
   method?: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put'
   name: string
   path?: string
-  private: boolean
+  private?: boolean
   type?: 'request' | 'simple'
   action?(state: any, ...args: any[]): any
   onAction?(state: any, ...args: any[]): any
