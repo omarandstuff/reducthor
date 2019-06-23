@@ -1,11 +1,11 @@
-import Reduxer from '../src/Reduxer'
-import { Config, Action } from '../src/Reduxer.types'
+import Reducthor from '../src/Reducthor'
+import { Config, Action } from '../src/Reducthor.types'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
 const mock = new MockAdapter(axios)
 
-describe('Reduxer', (): void => {
+describe('Reducthor', (): void => {
   describe('Simple Action', () => {
     it('lets an action to simply manipulate the state', (): void => {
       const action: Action = {
@@ -15,11 +15,11 @@ describe('Reduxer', (): void => {
         }
       }
       const config: Config = { actions: [action] }
-      const reduxer: Reduxer = new Reduxer(config)
+      const reducthor: Reducthor = new Reducthor(config)
 
-      reduxer.simpleAction()
+      reducthor.simpleAction()
 
-      const state = reduxer.store.getState()
+      const state = reducthor.store.getState()
 
       expect(state.toJS()).toEqual({ key: 'value' })
     })
@@ -35,11 +35,11 @@ describe('Reduxer', (): void => {
         }
       }
       const config: Config = { actions: [action] }
-      const reduxer: Reduxer = new Reduxer(config)
+      const reducthor: Reducthor = new Reducthor(config)
 
-      reduxer.simpleAction(10, 'dies')
+      reducthor.simpleAction(10, 'dies')
 
-      const state = reduxer.store.getState()
+      const state = reducthor.store.getState()
 
       expect(state.toJS()).toEqual({ key: 'value' })
     })
@@ -52,14 +52,14 @@ describe('Reduxer', (): void => {
         }
       }
       const config: Config = { actions: [action] }
-      const reduxer: Reduxer = new Reduxer(config)
+      const reducthor: Reducthor = new Reducthor(config)
       let finalResult: any = null
 
-      await reduxer.simpleAction(10, 'dies').then((result: any) => {
+      await reducthor.simpleAction(10, 'dies').then((result: any) => {
         finalResult = result
 
         // When this happnes the state already change
-        const state = reduxer.store.getState()
+        const state = reducthor.store.getState()
         expect(state.toJS()).toEqual({ key: 'value' })
       })
 
@@ -74,18 +74,18 @@ describe('Reduxer', (): void => {
         }
       }
       const config: Config = { actions: [action] }
-      const reduxer: Reduxer = new Reduxer(config)
+      const reducthor: Reducthor = new Reducthor(config)
       const thenMock: jest.Mock = jest.fn()
       let finalResult: any = null
 
-      await reduxer
+      await reducthor
         .simpleAction(10, 'dies')
         .then(thenMock)
         .catch((result: any) => {
           finalResult = result
 
           // When this happnes the state didn't change
-          const state = reduxer.store.getState()
+          const state = reducthor.store.getState()
           expect(state.toJS()).toEqual({})
         })
 
@@ -103,9 +103,9 @@ describe('Reduxer', (): void => {
     //     }
     //   }
     //   const config: Config = { actions: [action] }
-    //   const reduxer: Reduxer = new Reduxer(config)
-    //   reduxer.simpleAction()
-    //   const state = reduxer.store.getState()
+    //   const reducthor: Reducthor = new Reducthor(config)
+    //   reducthor.simpleAction()
+    //   const state = reducthor.store.getState()
     //   expect(state.toJS()).toEqual({ key: 'value' })
     // })
   })

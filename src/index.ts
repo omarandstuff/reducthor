@@ -1,1 +1,1 @@
-export { default } from './Reduxer'
+export { default } from './Reducthor'

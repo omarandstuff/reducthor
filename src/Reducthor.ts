@@ -1,19 +1,19 @@
 import { applyMiddleware, combineReducers, createStore, Reducer, ReducersMapObject, AnyAction, Dispatch } from 'redux'
-import { Action, AuthConfig, Config } from './Reduxer.types'
+import { Action, AuthConfig, Config } from './Reducthor.types'
 import thunk from 'redux-thunk'
 import { Map } from 'immutable'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 /**
- * Reduxer will take care of automatic reducer creation that handles "standard"
+ * Reducthor will take care of automatic reducer creation that handles "standard"
  * store tasks, like make a request type action or a simple store manipulation
  *
- * @param {Config} config of how reduxer will handle actions
+ * @param {Config} config of how reducthor will handle actions
  *
  */
-export default class Reduxer {
-  // Reduxer will generate attributes on the fly so we need to make sure it does not conflic
-  // with typescript, maybe at some ponint retypy the reduxer class?
+export default class Reducthor {
+  // Reducthor will generate attributes on the fly so we need to make sure it does not conflic
+  // with typescript, maybe at some ponint retypy the reducthor class?
   [key: string]: any
 
   // TODO: thunk actions have a problem with the Sore type since it expects only a plane Action
@@ -39,12 +39,12 @@ export default class Reduxer {
 
     // Create the store as normally if an initial state is provided then just use that if not check if actios
     // are simple; in that case we initialize it as an Immutable Map and if not we just pass an empty object that
-    // redux wll reshape into one with all the reduxer namespaces.
+    // redux wll reshape into one with all the reducthor namespaces.
     this.store = createStore(generatedReducers, config.initialState || (simple ? Map() : {}), finalMiddleWare)
   }
 
   /**
-   * In any time the user can reconfigure how reduxer will use an auth token when a request
+   * In any time the user can reconfigure how reducthor will use an auth token when a request
    * action has been called
    *
    * @param {AuthConfig} authConfig the new auth configuration to use
@@ -74,7 +74,7 @@ export default class Reduxer {
 
       // Behold the one reducer function
       return (state: any, action: AnyAction): any => {
-        // Reduxer actions use "type" to distinguish them, but in the reduzer
+        // Reducthor actions use "type" to distinguish them, but in the reduzer
         // actions are sored by the Action name
         if (this.actions[action.type]) {
           // actions always pass an array of aprams as payload
@@ -87,7 +87,7 @@ export default class Reduxer {
       const reducers: ReducersMapObject = {}
 
       Object.keys(actions).forEach((reducerNameSpace: string) => {
-        // Now the reduxer object has some how "namespaces" based on the reducers
+        // Now the reducthor object has some how "namespaces" based on the reducers
         this[reducerNameSpace] = {}
         this.actions[reducerNameSpace] = {}
 
