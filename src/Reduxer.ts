@@ -73,7 +73,7 @@ export default class Reduxer {
       })
 
       // Behold the one reducer function
-      return (state: any = Map(), action: AnyAction): any => {
+      return (state: any, action: AnyAction): any => {
         // Reduxer actions use "type" to distinguish them, but in the reduzer
         // actions are sored by the Action name
         if (this.actions[action.type]) {
