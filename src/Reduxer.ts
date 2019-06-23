@@ -289,9 +289,9 @@ export default class Reduxer {
         return new Promise((resolve, reject) => {
           try {
             dispatch({ type: action.name, args })
-            resolve(...args)
+            resolve({ args })
           } catch (error) {
-            reject.apply(null, [error, ...args])
+            reject({ error, args })
           }
         })
       })
