@@ -347,5 +347,65 @@ describe('Reducthor', (): void => {
         error: Error('Request failed with status code 400')
       })
     })
+
+    it('adds the configured auth headers when a request is private', async () => {
+      const action: Action = {
+        name: 'REQUEST_ACTION',
+        type: 'request',
+        path: '/path',
+        method: 'get',
+        private: true
+      }
+
+      mock.onGet('/path').reply(200)
+
+      const config: Config = {
+        authConfig: {
+          header: 'Ultra-Header',
+          token: 'thisisatoken'
+        },
+        actions: [action]
+      }
+      const reducthor: Reducthor = new Reducthor(config)
+
+      await reducthor.requestAction().then((result: any) => {
+        expect(result.response).toMatchObject({ config: { headers: { 'Ultra-Header': 'thisisatoken' } } })
+      })
+    })
+  })
+
+  describe('.configAuthToken', () => {
+    it('lets the user change the auth cpnfiguration at any time', async () => {
+      const action: Action = {
+        name: 'REQUEST_ACTION',
+        type: 'request',
+        path: '/path',
+        method: 'get',
+        private: true
+      }
+
+      mock.onGet('/path').reply(200)
+
+      const config: Config = {
+        actions: [action]
+      }
+      const reducthor: Reducthor = new Reducthor(config)
+
+      await reducthor.requestAction().then((result: any) => {
+        expect(result.response).toMatchObject({ config: { headers: {} } })
+      })
+
+      reducthor.configAuthToken({ token: 'thisisatoken' })
+
+      await reducthor.requestAction().then((result: any) => {
+        expect(result.response).toMatchObject({ config: { headers: { Authentication: 'thisisatoken' } } })
+      })
+
+      reducthor.configAuthToken({ header: 'Other-Header', token: 'moretoken' })
+
+      await reducthor.requestAction().then((result: any) => {
+        expect(result.response).toMatchObject({ config: { headers: { 'Other-Header': 'moretoken' } } })
+      })
+    })
   })
 })

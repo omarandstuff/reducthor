@@ -224,8 +224,8 @@ export default class Reducthor {
             params = data
           }
 
-          if (action.private) {
-            headers[this.config.authConfig.header] = this.config.authConfig.token
+          if (action.private && this.config.authConfig) {
+            headers[this.config.authConfig.header || 'Authentication'] = this.config.authConfig.token
           }
 
           let finalResponse: AxiosResponse = null
