@@ -2,6 +2,7 @@ import Reducthor from '../src/Reducthor'
 import { Config, Action } from '../src/Reducthor.types'
 import axios, { AxiosResponse, AxiosError } from 'axios'
 import MockAdapter from 'axios-mock-adapter'
+import { Map, fromJS } from 'immutable'
 
 const mock = new MockAdapter(axios)
 
@@ -10,6 +11,115 @@ beforeEach(() => {
 })
 
 describe('Reducthor', (): void => {
+  describe('Multiple reducers', () => {
+    it('lets the user configure multiple reducers', async () => {
+      let eventIndex = 0
+      const actions: any = {
+        simpleActions: [
+          {
+            name: 'SIMPLE_ACTION',
+            action: (state: any, arg1: number, arg2: string) => {
+              return state.set('key', 'value')
+            }
+          }
+        ],
+        requestActions: [
+          {
+            name: 'REQUEST_ACTION',
+            type: 'request',
+            path: '/path',
+            method: 'get',
+            onAction: (state: any, arg1: number, arg2: string) => {
+              expect(arg1).toEqual(10)
+              expect(arg2).toEqual('dies')
+              expect(state.toJS()).toEqual({ REQUEST_ACTION_STATUS: 'REQUESTING' })
+
+              return state.set('onAction', eventIndex++)
+            },
+            onRequestOk: (state: any, response: AxiosResponse, arg1: number, arg2: string) => {
+              expect(arg1).toEqual(10)
+              expect(arg2).toEqual('dies')
+              expect(state.toJS()).toEqual({ onAction: 0, REQUEST_ACTION_STATUS: 'OK' })
+
+              return state.set('onRequestOk', eventIndex++).set('data', response.data)
+            },
+            onUploadProgress: (state: any, progressEvent: any, arg1: number, arg2: string) => {
+              expect(arg1).toEqual(10)
+              expect(arg2).toEqual('dies')
+              // Mock does not support progress, lets open a PR
+              // return state.set('onUploadProgress', eventIndex++)
+              return state
+            },
+            onDownloadProgress: (state: any, progressEvent: any, arg1: number, arg2: string) => {
+              expect(arg1).toEqual(10)
+              expect(arg2).toEqual('dies')
+              // Mock does not support progress, lets open a PR
+              // return state.set('onUploadProgress', eventIndex++)
+              return state
+            },
+            onFinish: (state: any, arg1: number, arg2: string) => {
+              expect(arg1).toEqual(10)
+              expect(arg2).toEqual('dies')
+              return state.set('onFinish', eventIndex++)
+            }
+          }
+        ]
+      }
+      let finalSimpleResult: any = null
+      let finalRequestResult: any = null
+
+      mock.onGet('/path').reply(200, {
+        archivos: [{ name: 'trompo.jpg' }]
+      })
+
+      const config: Config = {
+        actions
+      }
+      const reducthor: Reducthor = new Reducthor(config)
+
+      await reducthor.simpleActions.simpleAction(10, 'dies').then((result: any) => {
+        finalSimpleResult = result
+
+        // When this happens the state already change
+        const state = reducthor.store.getState()
+        expect(fromJS(state).toJS()).toEqual({ requestActions: {}, simpleActions: { key: 'value' } })
+      })
+      await reducthor.requestActions.requestAction(10, 'dies').then((result: any) => {
+        finalRequestResult = result
+
+        // When this happens the state already change
+        const state = reducthor.store.getState()
+        expect(fromJS(state).toJS()).toEqual({
+          requestActions: {
+            onAction: 0,
+            onRequestOk: 1,
+            onFinish: 2,
+            REQUEST_ACTION_STATUS: 'OK',
+            data: { archivos: [{ name: 'trompo.jpg' }] }
+          },
+          simpleActions: { key: 'value' }
+        })
+      })
+
+      const state = reducthor.store.getState()
+      expect(fromJS(state).toJS()).toEqual({
+        requestActions: {
+          onAction: 0,
+          onRequestOk: 1,
+          onFinish: 2,
+          REQUEST_ACTION_STATUS: 'OK',
+          data: { archivos: [{ name: 'trompo.jpg' }] }
+        },
+        simpleActions: { key: 'value' }
+      })
+      expect(finalSimpleResult).toEqual({ args: [10, 'dies'] })
+      expect(finalRequestResult).toMatchObject({
+        args: [10, 'dies'],
+        response: { data: { archivos: [{ name: 'trompo.jpg' }] } }
+      })
+    })
+  })
+
   describe('Simple Action', () => {
     it('lets an action to simply manipulate the state', (): void => {
       const action: Action = {
@@ -63,7 +173,7 @@ describe('Reducthor', (): void => {
       await reducthor.simpleAction(10, 'dies').then((result: any) => {
         finalResult = result
 
-        // When this happnes the state already change
+        // When this happens the state already change
         const state = reducthor.store.getState()
         expect(state.toJS()).toEqual({ key: 'value' })
       })
@@ -89,7 +199,7 @@ describe('Reducthor', (): void => {
         .catch((result: any) => {
           finalResult = result
 
-          // When this happnes the state didn't change
+          // When this happens the state didn't change
           const state = reducthor.store.getState()
           expect(state.toJS()).toEqual({})
         })
@@ -273,7 +383,7 @@ describe('Reducthor', (): void => {
       await reducthor.requestAction(10, 'dies').then((result: any) => {
         finalResult = result
 
-        // When this happnes the state already change
+        // When this happens the state already change
         const state = reducthor.store.getState()
         expect(state.toJS()).toEqual({
           onAction: 0,
