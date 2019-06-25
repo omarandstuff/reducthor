@@ -23,10 +23,10 @@ export interface AuthConfig {
 export interface Config {
   baseUrl?: string
   authConfig?: AuthConfig
-  actions: Array<Action> | MultyAction
+  actions: Action[] | MultyAction
   composeWithDevTools?: any
   initialState?: any
-  middleware?: any | Array<any>
+  middleware?: any | any[]
 }
 
 export interface MultyAction {

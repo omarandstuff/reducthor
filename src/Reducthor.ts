@@ -19,7 +19,7 @@ export default class Reducthor {
   // TODO: thunk actions have a problem with the Sore type since it expects only a plane Action
   public store: any = null
 
-  private actions: Array<(state: any, ...args: any[]) => any> = []
+  private actions: ((state: any, ...args: any[]) => any)[] = []
   private config: Config = null
 
   public constructor(config: Config) {
@@ -60,17 +60,19 @@ export default class Reducthor {
 
   private generateReducers(actions: any, simple: boolean): Reducer {
     if (simple) {
-      actions.forEach((action: Action) => {
-        if (action.type === 'request') {
-          const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
+      actions.forEach(
+        (action: Action): void => {
+          if (action.type === 'request') {
+            const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
 
-          this.generateRequestActions(action, derivedActionNames)
-          this.generateRequestMainAction(action, derivedActionNames)
-        } else if (!action.type || action.type === 'simple') {
-          this.generateSimpleAction(action)
-          this.generateSimpleMainAction(action)
+            this.generateRequestActions(action, derivedActionNames)
+            this.generateRequestMainAction(action, derivedActionNames)
+          } else if (!action.type || action.type === 'simple') {
+            this.generateSimpleAction(action)
+            this.generateSimpleMainAction(action)
+          }
         }
-      })
+      )
 
       // Behold the one reducer function
       return (state: any, action: AnyAction): any => {
@@ -86,32 +88,36 @@ export default class Reducthor {
     } else {
       const reducers: ReducersMapObject = {}
 
-      Object.keys(actions).forEach((reducerNameSpace: string) => {
-        // Now the reducthor object has some how "namespaces" based on the reducers
-        this[reducerNameSpace] = {}
-        this.actions[reducerNameSpace] = {}
+      Object.keys(actions).forEach(
+        (reducerNameSpace: string): void => {
+          // Now the reducthor object has some how "namespaces" based on the reducers
+          this[reducerNameSpace] = {}
+          this.actions[reducerNameSpace] = {}
 
-        actions[reducerNameSpace].forEach((action: Action) => {
-          if (action.type === 'request') {
-            const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
+          actions[reducerNameSpace].forEach(
+            (action: Action): void => {
+              if (action.type === 'request') {
+                const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
 
-            this.generateRequestActions(action, derivedActionNames, reducerNameSpace)
-            this.generateRequestMainAction(action, derivedActionNames, reducerNameSpace)
-          } else if (!action.type || action.type === 'simple') {
-            this.generateSimpleAction(action, reducerNameSpace)
-            this.generateSimpleMainAction(action, reducerNameSpace)
-          }
-        })
+                this.generateRequestActions(action, derivedActionNames, reducerNameSpace)
+                this.generateRequestMainAction(action, derivedActionNames, reducerNameSpace)
+              } else if (!action.type || action.type === 'simple') {
+                this.generateSimpleAction(action, reducerNameSpace)
+                this.generateSimpleMainAction(action, reducerNameSpace)
+              }
+            }
+          )
 
-        // Behold the one reducer function for this "namespace"
-        reducers[reducerNameSpace] = (state: any = Map(), action: AnyAction): any => {
-          if (this.actions[reducerNameSpace][action.type]) {
-            return this.actions[reducerNameSpace][action.type].apply(null, [state, ...action.args])
-          } else {
-            return state
+          // Behold the one reducer function for this "namespace"
+          reducers[reducerNameSpace] = (state: any = Map(), action: AnyAction): any => {
+            if (this.actions[reducerNameSpace][action.type]) {
+              return this.actions[reducerNameSpace][action.type].apply(null, [state, ...action.args])
+            } else {
+              return state
+            }
           }
         }
-      })
+      )
 
       return combineReducers(reducers)
     }
@@ -119,7 +125,7 @@ export default class Reducthor {
 
   private generateDerivedActionsNames(actionName: string): any {
     return {
-      functionName: actionName.toLowerCase().replace(/_([a-z])/g, g => g[1].toUpperCase()),
+      functionName: actionName.toLowerCase().replace(/_([a-z])/g, (g): string => g[1].toUpperCase()),
       setRequestingActionName: `${actionName}_SET_REQUESTING`,
       uploadProgressActionName: `${actionName}_UPLOAD_PROGRESS`,
       downloadProgressActionName: `${actionName}_DOWNLOAD_PROGRESS`,
@@ -129,11 +135,11 @@ export default class Reducthor {
     }
   }
 
-  private generateRequestActions(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined) {
+  private generateRequestActions(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined): void {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
     // Before sending the request if set a status flag that shows that we are doing it
-    actions[derivedActionNames.setRequestingActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.setRequestingActionName] = (state: any, ...args: any[]): any => {
       const statusedState: any = state.set(`${action.name}_STATUS`, 'REQUESTING')
 
       // And let the user set anything afterwards
@@ -144,7 +150,7 @@ export default class Reducthor {
       }
     }
 
-    actions[derivedActionNames.uploadProgressActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.uploadProgressActionName] = (state: any, ...args: any[]): any => {
       if (action.onUploadProgress) {
         const progressEvent: any = args.shift()
 
@@ -154,7 +160,7 @@ export default class Reducthor {
       }
     }
 
-    actions[derivedActionNames.downloadProgressActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.downloadProgressActionName] = (state: any, ...args: any[]): any => {
       if (action.onDownloadProgress) {
         const progressEvent: any = args.shift()
 
@@ -165,7 +171,7 @@ export default class Reducthor {
     }
 
     // If the request has an ok status we set the flag as ok
-    actions[derivedActionNames.requestOkActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.requestOkActionName] = (state: any, ...args: any[]): any => {
       const statusedState = state.set(`${action.name}_STATUS`, 'OK')
 
       if (action.onRequestOk) {
@@ -178,7 +184,7 @@ export default class Reducthor {
     }
 
     // Set error flag if not ok
-    actions[derivedActionNames.requestErrorActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.requestErrorActionName] = (state: any, ...args: any[]): any => {
       const statusedState = state.set(`${action.name}_STATUS`, 'ERROR')
 
       if (action.onRequestError) {
@@ -190,7 +196,7 @@ export default class Reducthor {
       }
     }
 
-    actions[derivedActionNames.finishedActionName] = (state: any, ...args: any[]) => {
+    actions[derivedActionNames.finishedActionName] = (state: any, ...args: any[]): any => {
       if (action.onFinish) {
         return action.onFinish(state, ...args)
       } else {
@@ -199,79 +205,95 @@ export default class Reducthor {
     }
   }
 
-  private generateRequestMainAction(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined) {
+  private generateRequestMainAction(
+    action: Action,
+    derivedActionNames: any,
+    reducerNameSpace: string = undefined
+  ): void {
     const holder = reducerNameSpace ? this[reducerNameSpace] : this
 
-    holder[derivedActionNames.functionName] = (...args: any[]) => {
-      return this.store.dispatch((dispatch: Dispatch) => {
-        return new Promise((resolve, reject) => {
-          // Tell the store we are requesting
-          dispatch({ type: derivedActionNames.setRequestingActionName, args })
+    holder[derivedActionNames.functionName] = (...args: any[]): Promise<any> => {
+      return this.store.dispatch(
+        (dispatch: Dispatch): Promise<any> => {
+          return new Promise(
+            (resolve, reject): void => {
+              // Tell the store we are requesting
+              dispatch({ type: derivedActionNames.setRequestingActionName, args })
 
-          const data = args[0]
-          const headers = {}
-          let form = data
-          let params = {}
+              const data = args[0]
+              const headers = {}
+              let form = data
+              let params = {}
 
-          // Always use form for POST PATH AND PUT requests
-          if (data && ['post', 'patch', 'put'].includes(action.method)) {
-            form = new FormData()
+              // Always use form for POST PATH AND PUT requests
+              if (data && ['post', 'patch', 'put'].includes(action.method)) {
+                form = new FormData()
 
-            Object.keys(data).forEach(filedName => {
-              form.append(filedName, data[filedName])
-            })
-          } else {
-            params = data
-          }
-
-          if (action.private && this.config.authConfig) {
-            headers[this.config.authConfig.header || 'Authentication'] = this.config.authConfig.token
-          }
-
-          let finalResponse: AxiosResponse = null
-          let finalError: AxiosError = null
-
-          axios({
-            baseURL: this.config.baseUrl,
-            method: action.method,
-            url: action.path,
-            data: form,
-            params,
-            headers,
-            onUploadProgress: function(progressEvent) {
-              dispatch({ type: derivedActionNames.uploadProgressActionName, args: [progressEvent, ...args] })
-            },
-            onDownloadProgress: function(progressEvent) {
-              dispatch({ type: derivedActionNames.downloadProgressActionName, args: [progressEvent, ...args] })
-            }
-          })
-            .then(function(response) {
-              dispatch({ type: derivedActionNames.requestOkActionName, args: [response, ...args] })
-              finalResponse = response
-            })
-            .catch(function(error) {
-              dispatch({ type: derivedActionNames.requestErrorActionName, args: [error, ...args] })
-              finalError = error
-            })
-            .finally(() => {
-              dispatch({ type: derivedActionNames.finishedActionName, args })
-
-              // When all request actions has been taken place we just resolve the promise
-              if (finalResponse) {
-                resolve({ response: finalResponse, args })
+                Object.keys(data).forEach(
+                  (filedName: string): void => {
+                    form.append(filedName, data[filedName])
+                  }
+                )
               } else {
-                reject({ error: finalError, args })
+                params = data
               }
-            })
-        })
-      })
+
+              if (action.private && this.config.authConfig) {
+                headers[this.config.authConfig.header || 'Authentication'] = this.config.authConfig.token
+              }
+
+              let finalResponse: AxiosResponse = null
+              let finalError: AxiosError = null
+
+              axios({
+                baseURL: this.config.baseUrl,
+                method: action.method,
+                url: action.path,
+                data: form,
+                params,
+                headers,
+                onUploadProgress: function(progressEvent): void {
+                  dispatch({ type: derivedActionNames.uploadProgressActionName, args: [progressEvent, ...args] })
+                },
+                onDownloadProgress: function(progressEvent): void {
+                  dispatch({ type: derivedActionNames.downloadProgressActionName, args: [progressEvent, ...args] })
+                }
+              })
+                .then(
+                  (response: AxiosResponse): void => {
+                    dispatch({ type: derivedActionNames.requestOkActionName, args: [response, ...args] })
+                    finalResponse = response
+                  }
+                )
+                .catch(
+                  (error: AxiosError): void => {
+                    dispatch({ type: derivedActionNames.requestErrorActionName, args: [error, ...args] })
+                    finalError = error
+                  }
+                )
+                .finally(
+                  (): void => {
+                    dispatch({ type: derivedActionNames.finishedActionName, args })
+
+                    // When all request actions has been taken place we just resolve the promise
+                    if (finalResponse) {
+                      resolve({ response: finalResponse, args })
+                    } else {
+                      reject({ error: finalError, args })
+                    }
+                  }
+                )
+            }
+          )
+        }
+      )
     }
   }
 
-  private generateSimpleAction(action: Action, reducerNameSpace: string = undefined) {
+  private generateSimpleAction(action: Action, reducerNameSpace: string = undefined): void {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
-    actions[action.name] = (state, ...args) => {
+    actions[action.name] = (state: any, ...args: any[]): any => {
       if (action.action) {
         return action.action(state, ...args)
       } else {
@@ -280,21 +302,25 @@ export default class Reducthor {
     }
   }
 
-  private generateSimpleMainAction(action: Action, reducerNameSpace: string = undefined) {
-    const functionName = action.name.toLowerCase().replace(/_([a-z])/g, g => g[1].toUpperCase())
+  private generateSimpleMainAction(action: Action, reducerNameSpace: string = undefined): void {
+    const functionName = action.name.toLowerCase().replace(/_([a-z])/g, (g): string => g[1].toUpperCase())
     const holder = reducerNameSpace ? this[reducerNameSpace] : this
 
-    holder[functionName] = (...args: any[]) => {
-      return this.store.dispatch((dispatch: Dispatch) => {
-        return new Promise((resolve, reject) => {
-          try {
-            dispatch({ type: action.name, args })
-            resolve({ args })
-          } catch (error) {
-            reject({ error, args })
-          }
-        })
-      })
+    holder[functionName] = (...args: any[]): Promise<any> => {
+      return this.store.dispatch(
+        (dispatch: Dispatch): Promise<any> => {
+          return new Promise(
+            (resolve, reject): void => {
+              try {
+                dispatch({ type: action.name, args })
+                resolve({ args })
+              } catch (error) {
+                reject({ error, args })
+              }
+            }
+          )
+        }
+      )
     }
   }
 }
