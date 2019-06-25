@@ -258,9 +258,9 @@ export default class Reducthor {
 
               // When all request actions has been taken place we just resolve the promise
               if (finalResponse) {
-                resolve.apply(null, [finalResponse, ...args])
+                resolve({ response: finalResponse, args })
               } else {
-                reject.apply(null, [finalError, ...args])
+                reject({ error: finalError, args })
               }
             })
         })
