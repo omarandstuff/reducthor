@@ -242,9 +242,6 @@ export default class Reducthor {
                 headers[this.config.authConfig.header || 'Authentication'] = this.config.authConfig.token
               }
 
-              let finalResponse: AxiosResponse = null
-              let finalError: AxiosError = null
-
               axios({
                 baseURL: this.config.baseUrl,
                 method: action.method,
@@ -262,25 +259,15 @@ export default class Reducthor {
                 .then(
                   (response: AxiosResponse): void => {
                     dispatch({ type: derivedActionNames.requestOkActionName, args: [response, ...args] })
-                    finalResponse = response
+                    dispatch({ type: derivedActionNames.finishedActionName, args })
+                    resolve({ response, args })
                   }
                 )
                 .catch(
                   (error: AxiosError): void => {
                     dispatch({ type: derivedActionNames.requestErrorActionName, args: [error, ...args] })
-                    finalError = error
-                  }
-                )
-                .finally(
-                  (): void => {
                     dispatch({ type: derivedActionNames.finishedActionName, args })
-
-                    // When all request actions has been taken place we just resolve the promise
-                    if (finalResponse) {
-                      resolve({ response: finalResponse, args })
-                    } else {
-                      reject({ error: finalError, args })
-                    }
+                    reject({ error, args })
                   }
                 )
             }
