@@ -31,6 +31,7 @@ describe('Reducthor', (): void => {
     it('lets the user pass any number of args to the action', (): void => {
       const action: Action = {
         name: 'SIMPLE_ACTION',
+        type: 'simple',
         action: (state: any, arg1: number, arg2: string) => {
           expect(arg1).toEqual(10)
           expect(arg2).toEqual('dies')
@@ -304,39 +305,12 @@ describe('Reducthor', (): void => {
         type: 'request',
         path: '/path',
         method: 'post',
-        onAction: (state: any, arg1: number, arg2: string) => {
-          expect(state.toJS()).toEqual({ REQUEST_ACTION_STATUS: 'REQUESTING' })
-          expect(arg1).toEqual(10)
-          expect(arg2).toEqual('dies')
-
-          return state.set('onAction', eventIndex++)
-        },
         onRequestError: (state: any, error: AxiosError, arg1: number, arg2: string) => {
-          expect(state.toJS()).toEqual({ onAction: 0, REQUEST_ACTION_STATUS: 'ERROR' })
+          expect(state.toJS()).toEqual({ REQUEST_ACTION_STATUS: 'ERROR' })
           expect(arg1).toEqual(10)
           expect(arg2).toEqual('dies')
 
-          return state.set('onRequestOk', eventIndex++).set('error', error)
-        },
-        onUploadProgress: (state: any, progressEvent: any, arg1: number, arg2: string) => {
-          expect(arg1).toEqual(10)
-          expect(arg2).toEqual('dies')
-          // Mock does not support progress, lets open a PR
-          // return state.set('onUploadProgress', eventIndex++)
-          return state
-        },
-        onDownloadProgress: (state: any, progressEvent: any, arg1: number, arg2: string) => {
-          expect(arg1).toEqual(10)
-          expect(arg2).toEqual('dies')
-          // Mock does not support progress, lets open a PR
-          // return state.set('onUploadProgress', eventIndex++)
-          return state
-        },
-        onFinish: (state: any, arg1: number, arg2: string) => {
-          expect(arg1).toEqual(10)
-          expect(arg2).toEqual('dies')
-
-          return state.set('onFinish', eventIndex++)
+          return state.set('onRequestError', eventIndex++).set('error', error)
         }
       }
       let finalResult: any = null
@@ -353,12 +327,10 @@ describe('Reducthor', (): void => {
       await reducthor.requestAction(10, 'dies').catch((result: any) => {
         finalResult = result
 
-        // When this happnes the state already change
+        // When this happens the state already change
         const state = reducthor.store.getState()
         expect(state.toJS()).toEqual({
-          onAction: 0,
-          onRequestOk: 1,
-          onFinish: 2,
+          onRequestError: 0,
           REQUEST_ACTION_STATUS: 'ERROR',
           error: Error('Request failed with status code 400')
         })
@@ -366,13 +338,11 @@ describe('Reducthor', (): void => {
 
       const state = reducthor.store.getState()
       expect(state.toJS()).toEqual({
-        onAction: 0,
-        onRequestOk: 1,
-        onFinish: 2,
+        onRequestError: 0,
         REQUEST_ACTION_STATUS: 'ERROR',
         error: Error('Request failed with status code 400')
       })
-      expect(finalResult).toMatchObject({
+      expect(finalResult).toEqual({
         args: [10, 'dies'],
         error: Error('Request failed with status code 400')
       })
