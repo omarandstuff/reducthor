@@ -328,7 +328,7 @@ export default class Reducthor {
 
   private buildPath(basePath: string, args: any[]): { finalPath: string; nextIndex: number } {
     let finalPath: string = basePath
-    let nextIndex: number = 0
+    let nextIndex = 0
 
     while (true) {
       const indexOfParamIdentifier: number = finalPath.indexOf(':')
