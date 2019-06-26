@@ -73,7 +73,7 @@ export default reducthor
 
 Typescript:
 
-```js
+```ts
 // reducthor.ts
 
 import Reducthor, { ReducthorConfiguration, ReducthorInstance } from 'reducthor'
@@ -104,6 +104,36 @@ reducthor.setColor('red').then(() => {
   // Map { color: 'red' }
 })
 ```
+
+## Match our ReducthorInstance type with the generated functions (typescript)
+
+Since Reducthor is going to generate functions on the fly we should extend our ReducthorInstance interface if we want typescript to be aware of them.
+
+```ts
+// reducthor.ts
+
+import Reducthor, { ReducthorConfiguration, ReducthorInstance } from 'reducthor'
+import setColor from './actions/setColor'
+import otherAction from './actions/otherAction'
+
+const configuration: ReducthorConfiguration = {
+  actions: [setColor, otherAction]
+}
+
+const reducthor: ReducthorInstance = new Reducthor(configuration)
+
+/////// Important
+// extend the ReducthorInstance interface
+interface MyReducthorInstance extends ReducthorInstance {
+  setColor(color: string): Promise<void>
+  otherAction(): Promise<void>
+}
+
+/////// Important
+// export as the new interface
+export default reducthor as MyReducthorInstance
+```
+
 
 ## Request actions
 
@@ -209,16 +239,14 @@ The request action has several useful callbacks for every event the request is c
 ```js
 // actions/getPosts.js
 
-import Immutable from 'immutable'
-
 export default {
   name: 'GET_POSTS',
   type: 'request',
   path: '/posts',
   method: 'get',
   onAction: state => state, // At the moment we call the action from the reducthor object
-  onRequestOk: (state, response) => state, // The request was successful,
-  onRequestError: (state, error) => state, // The request return with some error status number
+  onRequestOk: (state, response) => state, // The request was successful
+  onRequestError: (state, error) => state, // The request returned with some error status number
   onUploadProgress: (state, progressEvent) => state, // axios can provide this event sometimes
   onDownloadProgress: (state, progressEvent) => state, // axios can provide this event sometimes
   onFinish: state => state // This happens at last either with a successfull request or not
@@ -231,8 +259,7 @@ Typescript:
 // actions/getPosts.ts
 
 import { ReducthorAction } from 'reducthor'
-import Immutable from 'immutable'
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, AxiosError } from 'axios'
 
 const action: ReducthorAction = {
   name: 'GET_POSTS',
@@ -240,8 +267,8 @@ const action: ReducthorAction = {
   path: '/posts',
   method: 'get',
   onAction: (state: any): any => state, // At the moment we call the action from the reducthor object
-  onRequestOk: (state, response: AxiosResponse): any => state, // The request was successful,
-  onRequestError: (state, error: AxiosError): any => state, // The request return with some error status number
+  onRequestOk: (state, response: AxiosResponse): any => state, // The request was successful
+  onRequestError: (state, error: AxiosError): any => state, // The request returned with some error status number
   onUploadProgress: (state: any, progressEvent: any): any => state, // axios can provide this event sometimes
   onDownloadProgress: (state: any, progressEvent: any) => state: any, // axios can provide this event sometimes
   onFinish: (state: any): any => state // This happens at last either with a successfull request or not
