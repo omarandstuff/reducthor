@@ -9,7 +9,6 @@
   "homepage": "https://github.com/omarandstuff/reducthor#readme",
   "repository": "github:omarandstuff/reducthor",
   "bugs": "https://github.com/omarandstuff/reducthor/issues",
-  "typings": "./index.d.ts",
   "scripts": {
     "clean": "rimraf dist coverage",
     "build": "tsc",

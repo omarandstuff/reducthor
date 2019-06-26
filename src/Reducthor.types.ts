@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios'
 
-export interface Action {
+export interface ReducthorAction {
   method?: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put'
   name: string
   path?: string
@@ -20,15 +20,15 @@ export interface AuthConfig {
   token: string
 }
 
-export interface Config {
+export interface ReducthorConfiguration {
   baseUrl?: string
   authConfig?: AuthConfig
-  actions: Action[] | MultyAction
+  actions: ReducthorAction[] | MultyAction
   composeWithDevTools?: any
   initialState?: any
   middleware?: any | any[]
 }
 
 export interface MultyAction {
-  [reducerName: string]: Action
+  [reducerName: string]: ReducthorAction
 }

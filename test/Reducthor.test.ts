@@ -1,5 +1,5 @@
 import Reducthor from '../src/Reducthor'
-import { Config, Action } from '../src/Reducthor.types'
+import { ReducthorConfiguration, ReducthorAction } from '../src/Reducthor.types'
 import axios, { AxiosResponse, AxiosError } from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { fromJS } from 'immutable'
@@ -77,7 +77,7 @@ describe('Reducthor', (): void => {
         archivos: [{ name: 'trompo.jpg' }]
       })
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -129,15 +129,15 @@ describe('Reducthor', (): void => {
     })
   })
 
-  describe('Simple Action', (): void => {
+  describe('Simple ReducthorAction', (): void => {
     it('lets an action to simply manipulate the state', (): void => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'SIMPLE_ACTION',
         action: (state: any): any => {
           return state.set('key', 'value')
         }
       }
-      const config: Config = { actions: [action] }
+      const config: ReducthorConfiguration = { actions: [action] }
       const reducthor: Reducthor = new Reducthor(config)
 
       reducthor.simpleAction()
@@ -148,7 +148,7 @@ describe('Reducthor', (): void => {
     })
 
     it('lets the user pass any number of args to the action', (): void => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'SIMPLE_ACTION',
         type: 'simple',
         action: (state: any, arg1: number, arg2: string): any => {
@@ -158,7 +158,7 @@ describe('Reducthor', (): void => {
           return state.set('key', 'value')
         }
       }
-      const config: Config = { actions: [action] }
+      const config: ReducthorConfiguration = { actions: [action] }
       const reducthor: Reducthor = new Reducthor(config)
 
       reducthor.simpleAction(10, 'dies')
@@ -169,13 +169,13 @@ describe('Reducthor', (): void => {
     })
 
     it('returns a promise that resolves when finished and recieve the original args', async (): Promise<void> => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'SIMPLE_ACTION',
         action: (state: any): any => {
           return state.set('key', 'value')
         }
       }
-      const config: Config = { actions: [action] }
+      const config: ReducthorConfiguration = { actions: [action] }
       const reducthor: Reducthor = new Reducthor(config)
       let finalResult: any = null
 
@@ -193,13 +193,13 @@ describe('Reducthor', (): void => {
     })
 
     it('returns a promise that catches any error inside promise', async (): Promise<void> => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'SIMPLE_ACTION',
         action: (state: any): any => {
           return state.error()
         }
       }
-      const config: Config = { actions: [action] }
+      const config: ReducthorConfiguration = { actions: [action] }
       const reducthor: Reducthor = new Reducthor(config)
       const thenMock: jest.Mock = jest.fn()
       let finalResult: any = null
@@ -227,7 +227,7 @@ describe('Reducthor', (): void => {
       void
     > => {
       let eventIndex = 0
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -261,7 +261,7 @@ describe('Reducthor', (): void => {
         archivos: [{ name: 'trompo.jpg' }]
       })
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions: [action]
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -280,7 +280,7 @@ describe('Reducthor', (): void => {
 
     it('lets the user pass any number of args to the action', async (): Promise<any> => {
       let eventIndex = 0
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -325,7 +325,7 @@ describe('Reducthor', (): void => {
         archivos: [{ name: 'trompo.jpg' }]
       })
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions: [action]
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -344,7 +344,7 @@ describe('Reducthor', (): void => {
 
     it('returns a promise that resolves when finished and recieve the original args', async (): Promise<void> => {
       let eventIndex = 0
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -390,7 +390,7 @@ describe('Reducthor', (): void => {
         archivos: [{ name: 'trompo.jpg' }]
       })
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions: [action]
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -427,7 +427,7 @@ describe('Reducthor', (): void => {
 
     it('returns a promise that catches any error inside promise', async (): Promise<void> => {
       let eventIndex = 0
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -446,7 +446,7 @@ describe('Reducthor', (): void => {
         errores: [{ name: 'is not a name' }]
       })
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions: [action]
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -478,7 +478,7 @@ describe('Reducthor', (): void => {
     })
 
     it('adds the configured auth headers when a request is private', async (): Promise<void> => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -488,7 +488,7 @@ describe('Reducthor', (): void => {
 
       mock.onGet('/path').reply(200)
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         authConfig: {
           header: 'Ultra-Header',
           token: 'thisisatoken'
@@ -505,9 +505,9 @@ describe('Reducthor', (): void => {
     })
   })
 
-  describe('.configAuthToken', (): void => {
+  describe('.configAuth', (): void => {
     it('lets the user change the auth cpnfiguration at any time', async (): Promise<void> => {
-      const action: Action = {
+      const action: ReducthorAction = {
         name: 'REQUEST_ACTION',
         type: 'request',
         path: '/path',
@@ -517,7 +517,7 @@ describe('Reducthor', (): void => {
 
       mock.onGet('/path').reply(200)
 
-      const config: Config = {
+      const config: ReducthorConfiguration = {
         actions: [action]
       }
       const reducthor: Reducthor = new Reducthor(config)
@@ -528,7 +528,7 @@ describe('Reducthor', (): void => {
         }
       )
 
-      reducthor.configAuthToken({ token: 'thisisatoken' })
+      reducthor.configAuth({ token: 'thisisatoken' })
 
       await reducthor.requestAction().then(
         (result: any): void => {
@@ -536,7 +536,7 @@ describe('Reducthor', (): void => {
         }
       )
 
-      reducthor.configAuthToken({ header: 'Other-Header', token: 'moretoken' })
+      reducthor.configAuth({ header: 'Other-Header', token: 'moretoken' })
 
       await reducthor.requestAction().then(
         (result: any): void => {

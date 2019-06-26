@@ -1,5 +1,5 @@
 import { applyMiddleware, combineReducers, createStore, Reducer, ReducersMapObject, AnyAction, Dispatch } from 'redux'
-import { Action, AuthConfig, Config } from './Reducthor.types'
+import { ReducthorAction, AuthConfig, ReducthorConfiguration } from './Reducthor.types'
 import thunk from 'redux-thunk'
 import { Map } from 'immutable'
 import axios, { AxiosError, AxiosResponse } from 'axios'
@@ -8,7 +8,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
  * Reducthor will take care of automatic reducer creation that handles "standard"
  * store tasks, like make a request type action or a simple store manipulation
  *
- * @param {Config} config of how reducthor will handle actions
+ * @param {ReducthorConfiguration} config of how reducthor will handle actions
  *
  */
 export default class Reducthor {
@@ -16,13 +16,13 @@ export default class Reducthor {
   // with typescript, maybe at some ponint retypy the reducthor class?
   [key: string]: any
 
-  // TODO: thunk actions have a problem with the Sore type since it expects only a plane Action
+  // TODO: thunk actions have a problem with the Sore type since it expects only a plane ReducthorAction
   public store: any = null
 
   private actions: ((state: any, ...args: any[]) => any)[] = []
-  private config: Config = null
+  private config: ReducthorConfiguration = null
 
-  public constructor(config: Config) {
+  public constructor(config: ReducthorConfiguration) {
     this.config = config
 
     // If actions is just and array the we just create a reducer that handles all actions
@@ -50,7 +50,7 @@ export default class Reducthor {
    * @param {AuthConfig} authConfig the new auth configuration to use
    *
    */
-  public configAuthToken(authConfig: AuthConfig): void {
+  public configAuth(authConfig: AuthConfig): void {
     if (this.config.authConfig) {
       this.config.authConfig = { ...this.config.authConfig, ...authConfig }
     } else {
@@ -61,7 +61,7 @@ export default class Reducthor {
   private generateReducers(actions: any, simple: boolean): Reducer {
     if (simple) {
       actions.forEach(
-        (action: Action): void => {
+        (action: ReducthorAction): void => {
           if (action.type === 'request') {
             const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
 
@@ -77,7 +77,7 @@ export default class Reducthor {
       // Behold the one reducer function
       return (state: any, action: AnyAction): any => {
         // Reducthor actions use "type" to distinguish them, but in the reduzer
-        // actions are sored by the Action name
+        // actions are sored by the ReducthorAction name
         if (this.actions[action.type]) {
           // actions always pass an array of aprams as payload
           return this.actions[action.type].apply(null, [state, ...action.args])
@@ -95,7 +95,7 @@ export default class Reducthor {
           this.actions[reducerNameSpace] = {}
 
           actions[reducerNameSpace].forEach(
-            (action: Action): void => {
+            (action: ReducthorAction): void => {
               if (action.type === 'request') {
                 const derivedActionNames: any = this.generateDerivedActionsNames(action.name)
 
@@ -135,7 +135,7 @@ export default class Reducthor {
     }
   }
 
-  private generateRequestActions(action: Action, derivedActionNames: any, reducerNameSpace: string = undefined): void {
+  private generateRequestActions(action: ReducthorAction, derivedActionNames: any, reducerNameSpace: string = undefined): void {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
     // Before sending the request if set a status flag that shows that we are doing it
@@ -206,7 +206,7 @@ export default class Reducthor {
   }
 
   private generateRequestMainAction(
-    action: Action,
+    action: ReducthorAction,
     derivedActionNames: any,
     reducerNameSpace: string = undefined
   ): void {
@@ -277,7 +277,7 @@ export default class Reducthor {
     }
   }
 
-  private generateSimpleAction(action: Action, reducerNameSpace: string = undefined): void {
+  private generateSimpleAction(action: ReducthorAction, reducerNameSpace: string = undefined): void {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
     actions[action.name] = (state: any, ...args: any[]): any => {
@@ -289,7 +289,7 @@ export default class Reducthor {
     }
   }
 
-  private generateSimpleMainAction(action: Action, reducerNameSpace: string = undefined): void {
+  private generateSimpleMainAction(action: ReducthorAction, reducerNameSpace: string = undefined): void {
     const functionName = action.name.toLowerCase().replace(/_([a-z])/g, (g): string => g[1].toUpperCase())
     const holder = reducerNameSpace ? this[reducerNameSpace] : this
 
