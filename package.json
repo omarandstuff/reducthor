@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Redux wrapper",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/Reducthor.types.d.ts",
   "author": "David De Anda <omarandstuff@gmail.com> (https://github.com/omarandstuff)",
   "license": "MIT",
   "homepage": "https://github.com/omarandstuff/reducthor#readme",
