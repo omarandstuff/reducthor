@@ -7,9 +7,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/f7a4eaeaeaffb4327a8e/maintainability)](https://codeclimate.com/github/omarandstuff/reducthor/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f7a4eaeaeaffb4327a8e/test_coverage)](https://codeclimate.com/github/omarandstuff/reducthor/test_coverage)
 
-Reducthor is a clean simplification of the redux workflow. By letting you describe readable action objects.
+Reducthor is a clean simplification of the redux workflow by letting you describe readable action objects.
 
-Reduxthor uses [axios](https://github.com/axios/axios) as the remote request handler and [Immutbale JS](https://github.com/immutable-js/immutable-js) to have an immutable state.
+Reducthor uses [axios](https://github.com/axios/axios) as the remote request handler and [Immutbale JS](https://github.com/immutable-js/immutable-js) to have an immutable state.
 
 ## Install
 
@@ -21,7 +21,7 @@ yarn add reducthor
 
 ## Getting staterd
 
-A new instalnce of reducthor should be instantiated at the beggining, passong a configuraion object containing our action descriptiors.
+A new instance of Reducthor should be instantiated at the beginning, passing a configuration object containing our action descriptors.
 
 This is how a simple action looks like
 
@@ -89,7 +89,7 @@ const reducthor: ReducthorInstance = new Reducthor(configuration)
 export default reducthor
 ```
 
-And this is how you can call that action from our reducthor object to mutate the state.
+And this is how you can call that action from our Reducthor object to mutate the state.
 
 ```js
 // index.js
@@ -153,7 +153,7 @@ const action: ReducthorAction = {
 export default action
 ```
 
-We can configure a base URL in our rethuctor object.
+We can configure a base URL in our Rethuctor object.
 
 ```js
 // reducthor.js
@@ -189,7 +189,7 @@ const reducthor: ReducthorInstance = new Reducthor(configuration)
 export default reducthor
 ```
 
-Now we call the request action through our reducthor instance and since we specified the `mehtod` as `get` we can pass some query params as the first argument of the generated function.
+Now we call the request action through our Reducthor instance and since we specified the `mehtod` as `get` we can pass some query params as the first argument of the generated function.
 
 ```js
 // index.js
@@ -204,7 +204,7 @@ reducthor.getPosts({ category: 'funy' }).then(() => {
 
 ### All the request action callbacks
 
-The request action has several usefull callbacks for every event the request is coming through where we can mutate the state as our convenience.
+The request action has several useful callbacks for every event the request is coming through where we can mutate the state as our convenience.
 
 ```js
 // actions/getPosts.js
@@ -216,7 +216,7 @@ export default {
   type: 'request',
   path: '/posts',
   method: 'get',
-  onAction: state => satate, // At the moment you call the action from the reducthor object
+  onAction: state => satate, // At the moment we call the action from the reducthor object
   onRequestOk: (state, response) => state, // The request was successful,
   onRequestError: (state, error) => state, // The request return with some error status number
   onUploadProgress: (state, progressEvent) => state, // axios can provide this event sometimes
@@ -251,7 +251,7 @@ export default action
 
 ### Dynamic path
 
-You can specify dynamic paths that should by constructed on the fly. Like probably you need the path to contain the id of the posts you would like to request.
+You can specify dynamic paths that should be built on the fly. Like probably you need the path to contain the id of a specific post.
 
 ```js
 // actions/getPost.js
@@ -285,7 +285,7 @@ reducthor.getPost(25).then(() => {
 
 ### Private request actions
 
-If the remote server needs some kind of authentication through request headers you can set the auth configuration.
+If the remote server needs some kind of authentication through the request headers you can set the auth configuration.
 
 ```js
 // reducthor.js
@@ -344,7 +344,7 @@ reducthor.configureAuth({ token: 'newtoken' })
 
 If you are using react-redux to handle state from inside components you can use Reducthor to replace the mapToDispatch approach.
 
-Just set the provider store using the reacthor store
+Just set the provider store using the Reacthor store property
 
 ```js
 import React from 'react'
@@ -390,7 +390,7 @@ export default connect(mapStateToProps)(Counter)
 
 ## Use a multy reducer store
 
-If you like to use a multy reducer kind of store you can specify actions in the configuration to follow this pattern.
+If you like to use a multy-reducer kind of store you can specify actions in the configuration to follow this pattern.
 
 ```js
 // reducthor.js
@@ -422,7 +422,7 @@ reducthor.users.getUsers({ status: 'active' })
 
 ## Initial state and middleware
 
-You can always pass an inital state through the Reducthor configuration and some custom middleware
+You can always pass an initial state through the Reducthor configuration and some custom middleware
 
 ```js
 // reducthor.js
@@ -445,7 +445,7 @@ export default reducthor
 
 ## Use with redux-devtools-extension
 
-If you would like to use redux-devtools-extension to debugg your redux state you can pass the composeWithDevTools function to through the configuration.
+If you would like to use redux-devtools-extension to debug your redux state you can pass the composeWithDevTools function to through the configuration.
 
 ```js
 // reducthor.js
