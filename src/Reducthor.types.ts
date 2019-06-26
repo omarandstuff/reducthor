@@ -32,3 +32,9 @@ export interface ReducthorConfiguration {
 export interface MultyAction {
   [reducerName: string]: ReducthorAction
 }
+
+export interface ReducthorInstance {
+  [key: string]: any
+  store: any
+  configAuth(authConfig: AuthConfig): void
+}
