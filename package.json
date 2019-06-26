@@ -1,6 +1,6 @@
 {
   "name": "reducthor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Redux wrapper",
   "main": "dist/index.js",
   "types": "dist/Reducthor.types.d.ts",
