@@ -135,7 +135,11 @@ export default class Reducthor {
     }
   }
 
-  private generateRequestActions(action: ReducthorAction, derivedActionNames: any, reducerNameSpace: string = undefined): void {
+  private generateRequestActions(
+    action: ReducthorAction,
+    derivedActionNames: any,
+    reducerNameSpace: string = undefined
+  ): void {
     const actions = reducerNameSpace ? this.actions[reducerNameSpace] : this.actions
 
     // Before sending the request if set a status flag that shows that we are doing it
