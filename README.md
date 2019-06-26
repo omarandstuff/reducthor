@@ -216,12 +216,12 @@ export default {
   type: 'request',
   path: '/posts',
   method: 'get',
-  onAction: state => satate, // At the moment we call the action from the reducthor object
+  onAction: state => state, // At the moment we call the action from the reducthor object
   onRequestOk: (state, response) => state, // The request was successful,
   onRequestError: (state, error) => state, // The request return with some error status number
   onUploadProgress: (state, progressEvent) => state, // axios can provide this event sometimes
   onDownloadProgress: (state, progressEvent) => state, // axios can provide this event sometimes
-  onFinish: state => satate // This happens at last either with a successfull request or not
+  onFinish: state => state // This happens at last either with a successfull request or not
 }
 ```
 
@@ -239,11 +239,13 @@ const action: ReducthorAction = {
   type: 'request',
   path: '/posts',
   method: 'get',
-  onRequestOk: (state: any, response: AxiosResponse) => {
-    const posts = response.data
-
-    return state.set('posts', Immutable.fromJS(posts))
-  }
+  onAction: (state: any): any => state, // At the moment we call the action from the reducthor object
+  onRequestOk: (state, response: AxiosResponse): any => state, // The request was successful,
+  onRequestError: (state, error: AxiosError): any => state, // The request return with some error status number
+  onUploadProgress: (state: any, progressEvent: any): any => state, // axios can provide this event sometimes
+  onDownloadProgress: (state: any, progressEvent: any) => state: any, // axios can provide this event sometimes
+  onFinish: (state: any): any => state // This happens at last either with a successfull request or not
+}
 }
 
 export default action
