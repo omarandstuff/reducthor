@@ -45,7 +45,7 @@ import { ReducthorAction } from 'reducthor'
 
 const action: ReducthorAction = {
   name: 'SET_COLOR',
-  action: (state: any, color: srtring) => {
+  action: (state: any, color: string) => {
     return state.set('color', color)
   }
 }
