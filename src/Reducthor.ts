@@ -224,7 +224,18 @@ export default class Reducthor {
               // Tell the store we are requesting
               dispatch({ type: derivedActionNames.setRequestingActionName, args })
 
-              const data = args[0]
+              let actualPath: string
+              let nextArgIndex: number
+              try {
+                const { finalPath, nextIndex } = this.buildPath(action.path, args)
+
+                actualPath = finalPath
+                nextArgIndex = nextIndex
+              } catch (error) {
+                reject({ error, args })
+              }
+
+              const data = args[nextArgIndex]
               const headers = {}
               let form = data
               let params = {}
@@ -249,7 +260,7 @@ export default class Reducthor {
               axios({
                 baseURL: this.config.baseUrl,
                 method: action.method,
-                url: action.path,
+                url: actualPath,
                 data: form,
                 params,
                 headers,
@@ -313,5 +324,33 @@ export default class Reducthor {
         }
       )
     }
+  }
+
+  private buildPath(basePath: string, args: any[]): { finalPath: string; nextIndex: number } {
+    let finalPath: string = basePath
+    let nextIndex: number = 0
+
+    while (true) {
+      const indexOfParamIdentifier: number = finalPath.indexOf(':')
+
+      if (indexOfParamIdentifier !== -1) {
+        let indexOfEndOfParam: number = finalPath.indexOf('/', indexOfParamIdentifier)
+        indexOfEndOfParam = indexOfEndOfParam !== -1 ? indexOfEndOfParam : finalPath.length
+        const param: string = finalPath.substring(indexOfParamIdentifier, indexOfEndOfParam)
+
+        const nextArg: any = args[nextIndex++]
+        if (typeof nextArg === 'string' || typeof nextArg === 'number') {
+          finalPath = finalPath.replace(param, String(nextArg))
+        } else {
+          if (process.env.NODE_ENV !== 'production') {
+            throw new Error(`You didn't provide enough arguments to build ${basePath}`)
+          }
+        }
+      } else {
+        break
+      }
+    }
+
+    return { finalPath, nextIndex }
   }
 }

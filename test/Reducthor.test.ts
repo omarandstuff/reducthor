@@ -503,6 +503,51 @@ describe('Reducthor', (): void => {
         }
       )
     })
+
+    describe('dynamic path', (): void => {
+      it('builds the path based on the action function call first arguments', async (): Promise<void> => {
+        const action: ReducthorAction = {
+          name: 'REQUEST_ACTION',
+          type: 'request',
+          path: '/path/:id/to/:category/items',
+          method: 'get'
+        }
+
+        mock.onGet().reply(200)
+
+        const config: ReducthorConfiguration = {
+          actions: [action]
+        }
+        const reducthor: Reducthor = new Reducthor(config)
+
+        await reducthor.requestAction(10, 'mostros', { limit: 8 }).then((result: any) => {
+          expect(result.response.config).toMatchObject({ url: '/path/10/to/mostros/items', params: { limit: 8 } })
+        })
+      })
+
+      it('throws and error if there are not enough arguments to build the path', async (): Promise<void> => {
+        const action: ReducthorAction = {
+          name: 'REQUEST_ACTION',
+          type: 'request',
+          path: '/path/:id/to/:category/items',
+          method: 'get'
+        }
+
+        mock.onGet().reply(200)
+
+        const config: ReducthorConfiguration = {
+          actions: [action]
+        }
+        const reducthor: Reducthor = new Reducthor(config)
+
+        reducthor.requestAction(10, { limit: 8 }).catch((result: any) => {
+          expect(result).toEqual({
+            args: [10, { limit: 8 }],
+            error: Error("You didn't provide enough arguments to build /path/:id/to/:category/items")
+          })
+        })
+      })
+    })
   })
 
   describe('.configAuth', (): void => {
