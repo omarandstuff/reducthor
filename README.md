@@ -357,6 +357,30 @@ export default {
 }
 ```
 
+### Send multipart/form-data
+
+If you need to upload files to your server, you need to encode the request using multypart/formdata content type, for this you just need to set `useMultyPartForm` in your action.
+
+```js
+// actions/getPost.js
+
+import Immutable from 'immutable'
+
+export default {
+  name: 'GET_POST',
+  type: 'request',
+  path: '/post/:id',
+  method: 'get',
+  private: true,
+  useMultyPartForm: true, // here
+  onRequestOk: (state, response) => {
+    const posts = response.data
+
+    return state.set('posts', Immutable.fromJS(posts))
+  }
+}
+```
+
 #### Set the auth configuration any time
 
 If you need to specify authentication at any point you can use the `configureAuth` method.
