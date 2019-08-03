@@ -240,15 +240,17 @@ export default class Reducthor {
               let form = data
               let params = {}
 
-              // Always use form for POST PATH AND PUT requests
-              if (data && ['post', 'patch', 'put'].includes(action.method)) {
-                form = new FormData()
+              // Use form for POST PATH AND PUT requests when configured
+              if (data && ['post', 'patch', 'put'].includes(action.method.toLowerCase())) {
+                if (action.useMultyPartForm) {
+                  form = new FormData()
 
-                Object.keys(data).forEach(
-                  (filedName: string): void => {
-                    form.append(filedName, data[filedName])
-                  }
-                )
+                  Object.keys(data).forEach(
+                    (filedName: string): void => {
+                      form.append(filedName, data[filedName])
+                    }
+                  )
+                }
               } else {
                 params = data
               }

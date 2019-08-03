@@ -499,7 +499,44 @@ describe('Reducthor', (): void => {
 
       await reducthor.requestAction().then(
         (result: any): void => {
-          expect(result.response).toMatchObject({ config: { headers: { 'Ultra-Header': 'thisisatoken' } } })
+          expect(result.response).toMatchObject({
+            config: { headers: { 'Ultra-Header': 'thisisatoken' } }
+          })
+        }
+      )
+    })
+
+    it('uses a multypart form to send data for post put and patch methods when configured', async (): Promise<void> => {
+      const action: ReducthorAction = {
+        name: 'REQUEST_ACTION',
+        type: 'request',
+        path: '/path',
+        method: 'post',
+        private: true
+      }
+
+      mock.onPost('/path').reply(200)
+
+      const config: ReducthorConfiguration = {
+        actions: [action]
+      }
+      const reducthor: Reducthor = new Reducthor(config)
+
+      await reducthor.requestAction({ data: 'data' }).then(
+        (result: any): void => {
+          expect(result.response).toMatchObject({
+            config: { headers: { 'Content-Type': 'application/json;charset=utf-8' } }
+          })
+        }
+      )
+
+      action.useMultyPartForm = true
+
+      await reducthor.requestAction({ data: 'data' }).then(
+        (result: any): void => {
+          expect(result.response).toMatchObject({
+            config: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+          })
         }
       )
     })

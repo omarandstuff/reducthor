@@ -1,4 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios'
+import { Store } from 'redux'
 
 export interface ReducthorAction {
   method?: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put'
@@ -6,6 +7,7 @@ export interface ReducthorAction {
   path?: string
   private?: boolean
   type?: 'request' | 'simple'
+  useMultyPartForm?: boolean
   action?(state: any, ...args: any[]): any
   onAction?(state: any, ...args: any[]): any
   onRequestOk?(state: any, request: AxiosResponse, ...args: any[]): any
@@ -35,6 +37,6 @@ export interface MultyAction {
 
 export interface ReducthorInstance {
   [key: string]: any
-  store: any
+  store: Store
   configAuth(authConfig: AuthConfig): void
 }
