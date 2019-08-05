@@ -275,28 +275,15 @@ export default class Reducthor {
               })
                 .then(
                   (response: AxiosResponse): void => {
-                    // Catch and do nothing to let the main thread deal with the errors derved
-                    // inside this actions
-                    try {
-                      dispatch({ type: derivedActionNames.requestOkActionName, args: [response, ...args] })
-                    } catch {}
-                    try {
-                      dispatch({ type: derivedActionNames.finishedActionName, args })
-                    } catch {}
-
+                    dispatch({ type: derivedActionNames.requestOkActionName, args: [response, ...args] })
+                    dispatch({ type: derivedActionNames.finishedActionName, args })
                     resolve({ response, args })
                   }
                 )
                 .catch(
                   (error: AxiosError): void => {
-                    // Catch and do nothing to let the main thread deal with the errors derved
-                    // inside this actions
-                    try {
-                      dispatch({ type: derivedActionNames.requestErrorActionName, args: [error, ...args] })
-                    } catch {}
-                    try {
-                      dispatch({ type: derivedActionNames.finishedActionName, args })
-                    } catch {}
+                    dispatch({ type: derivedActionNames.requestErrorActionName, args: [error, ...args] })
+                    dispatch({ type: derivedActionNames.finishedActionName, args })
                     reject({ error, args })
                   }
                 )
@@ -327,14 +314,13 @@ export default class Reducthor {
       return this.store.dispatch(
         (dispatch: Dispatch): Promise<any> => {
           return new Promise(
-            (resolve): void => {
-              // Errors thown at this action should be delegated to the main thread
-              // so we only resolve this kind of action
+            (resolve, reject): void => {
               try {
                 dispatch({ type: action.name, args })
-              } catch {}
-
-              resolve({ args })
+                resolve({ args })
+              } catch (error) {
+                reject({ error, args })
+              }
             }
           )
         }
