@@ -192,7 +192,7 @@ describe('Reducthor', (): void => {
       expect(finalResult).toEqual({ args: [10, 'dies'] })
     })
 
-    it('returns a promise that catches any error inside promise', async (): Promise<void> => {
+    it('always resolve and does not deal with errors outside this execution', async (): Promise<void> => {
       const action: ReducthorAction = {
         name: 'SIMPLE_ACTION',
         action: (state: any): any => {
@@ -202,23 +202,10 @@ describe('Reducthor', (): void => {
       const config: ReducthorConfiguration = { actions: [action] }
       const reducthor: Reducthor = new Reducthor(config)
       const thenMock: jest.Mock = jest.fn()
-      let finalResult: any = null
 
-      await reducthor
-        .simpleAction(10, 'dies')
-        .then(thenMock)
-        .catch(
-          (result: any): void => {
-            finalResult = result
+      await reducthor.simpleAction(10, 'dies').then(thenMock)
 
-            // When this happens the state didn't change
-            const state = reducthor.store.getState()
-            expect(state.toJS()).toEqual({})
-          }
-        )
-
-      expect(thenMock.mock.calls.length).toEqual(0)
-      expect(finalResult).toEqual({ error: TypeError('state.error is not a function'), args: [10, 'dies'] })
+      expect(thenMock.mock.calls.length).toEqual(1)
     })
   })
 
