@@ -19,7 +19,7 @@ npm install reducthor
 yarn add reducthor
 ```
 
-## Getting staterd
+## Getting started
 
 A new instance of Reducthor should be instantiated at the beginning, passing a configuration object containing our action descriptors.
 
