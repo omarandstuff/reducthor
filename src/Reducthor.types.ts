@@ -40,3 +40,13 @@ export interface ReducthorInstance {
   store: Store
   configAuth(authConfig: AuthConfig): void
 }
+
+export interface ReducthorResult {
+  response: AxiosResponse
+  args: any[]
+}
+
+export interface ReducthorError {
+  error: AxiosError | Error
+  args: any[]
+}

@@ -244,13 +244,11 @@ describe('Reducthor', (): void => {
         },
         onUploadProgress: (state: any, progressEvent: any): any => {
           // Mock does not support progress, lets open a PR
-          // return state.set('onUploadProgress', eventIndex++)
-          return state
+          return state.set('onUploadProgress', eventIndex++)
         },
         onDownloadProgress: (state: any, progressEvent: any): any => {
           // Mock does not support progress, lets open a PR
-          // return state.set('onUploadProgress', eventIndex++)
-          return state
+          return state.set('onUploadProgress', eventIndex++)
         },
         onFinish: (state: any): any => {
           return state.set('onFinish', eventIndex++)
@@ -557,9 +555,11 @@ describe('Reducthor', (): void => {
         }
         const reducthor: Reducthor = new Reducthor(config)
 
-        await reducthor.requestAction(10, 'mostros', { limit: 8 }).then((result: any) => {
-          expect(result.response.config).toMatchObject({ url: '/path/10/to/mostros/items', params: { limit: 8 } })
-        })
+        await reducthor.requestAction(10, 'mostros', { limit: 8 }).then(
+          (result: any): void => {
+            expect(result.response.config).toMatchObject({ url: '/path/10/to/mostros/items', params: { limit: 8 } })
+          }
+        )
       })
 
       it('throws and error if there are not enough arguments to build the path', async (): Promise<void> => {
@@ -577,12 +577,14 @@ describe('Reducthor', (): void => {
         }
         const reducthor: Reducthor = new Reducthor(config)
 
-        reducthor.requestAction(10, { limit: 8 }).catch((result: any) => {
-          expect(result).toEqual({
-            args: [10, { limit: 8 }],
-            error: Error("You didn't provide enough arguments to build /path/:id/to/:category/items")
-          })
-        })
+        reducthor.requestAction(10, { limit: 8 }).catch(
+          (result: any): void => {
+            expect(result).toEqual({
+              args: [10, { limit: 8 }],
+              error: Error("You didn't provide enough arguments to build /path/:id/to/:category/items")
+            })
+          }
+        )
       })
     })
   })
