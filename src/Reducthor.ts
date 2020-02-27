@@ -16,11 +16,12 @@ export default class Reducthor {
   // with typescript, maybe at some ponint retypy the reducthor class?
   [key: string]: any
 
+  public config: ReducthorConfiguration = null
+
   // TODO: thunk actions have a problem with the Sore type since it expects only a plane ReducthorAction
   public store: any = null
 
   private actions: ((state: any, ...args: any[]) => any)[] = []
-  private config: ReducthorConfiguration = null
 
   public constructor(config: ReducthorConfiguration) {
     this.config = config
