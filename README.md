@@ -383,14 +383,14 @@ export default {
 
 #### Set the auth configuration any time
 
-If you need to specify authentication at any point you can use the `configureAuth` method.
+If you need to specify authentication at any point you can use the `configAuth` method.
 
 ```js
 // index.js
 
 import reducthor from './reducthor'
 
-reducthor.configureAuth({ token: 'newtoken' })
+reducthor.configAuth({ token: 'newtoken' })
 ```
 
 ## Using with react-redux
