@@ -258,6 +258,7 @@ export default class Reducthor {
 
               if (action.private && this.config.authConfig) {
                 headers[this.config.authConfig.header || 'Authentication'] = this.config.authConfig.token
+                headers['Access-Control-Allow-Origin'] = '*'
               }
 
               axios({
